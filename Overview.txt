@@ -1,0 +1,118 @@
+Checked if the columns which should contain unique value like 'ID','Name' and 'LongName' contain unique values or not. Found out that 
+"Name" and 'LongName' had duplicate values so to avoid confusion while analysis, dropped the duplicate entries from both the columns.
+
+1) Cleaning 'Contract' column by dividing it into two parts- 'Contract start year' and 'Contract end year'; 
+   irrelevant values like 'Free' and 'long strings' are dropped. 
+
+2) Cleaning 'height' column ---- 
+   a) Height is present in two formats - first like '190cm' and other like 6'3 i.e 6 feet 3 inches.
+      Entries present in feet are converted to cm and unit 'cm' is removed from the entries. 
+
+      height_string = str(height)
+      if height_string[len(height_string)-2:len(height_string)] == 'cm':  #check if last 2 digits are 'cm'
+            return height_string[0:3]
+      else:
+            temp = height_string.split("'")  #spliting using ' as the separator
+            temp_first_part = float(temp[0]) * 30.48
+            temp_second_part = temp[1].split('"')   #splitting using " as the separator
+            temp_second_part = float(temp_second_part[0]) * 2.54
+      return (temp_first_part + temp_second_part)
+
+3) Cleaning 'weight' column
+    a) Weight is present in two formats - first like '80kg' and then like '130lbs'. 
+       Entries present in each column is converted to 'kg' and unit 'kg' is dropped. 
+       
+       weight_string = str(weight)
+       if weight_string[len(weight_string)-2:len(weight_string)] == 'kg':  #last 2 digits are kg
+            return weight_string[0:len(weight_string)-2]
+
+       elif weight_string[len(weight_string)-3:len(weight_string)] == 'lbs': #last 3 digits are lbs
+            weight_lbs = weight_string[0:len(weight_string)-3]
+            return (float(weight_lbs) * 0.45)                                   #returning weight in kg
+
+4) Cleaning 'value' column
+      a) Values are present in two forms - 'â‚¬103.5M' and like 'â‚¬103.5K'. 
+         "â‚¬" is removed from each entry and then, each entry is converted to million if it is in K. 
+          
+              value_string = str(value)
+              value_string_cleaned = value_string[1:len(value_string)]   #Extracting numeric part along with 'M' and 'K'
+              #return value_string_cleaned
+
+              if value_string_cleaned[-1] == 'K':
+                   value_float = (value_string_cleaned[0:len(value_string_cleaned)-1])  #Extracting numeric part and leaving 'M' and 'K'
+                   return float(value_float) * 0.001                         #Conversion into million
+
+              elif value_string_cleaned[-1] == 'M':
+                   return value_string_cleaned[0:len(value_string_cleaned)-1]
+
+5) Cleaning 'wage' column
+       a) This column has entries like 'â‚¬825K','â‚¬0','â‚¬800'. We will remove 'â‚¬' and 'K 'from each entry.
+             
+             def clean_wage(wage):
+                 wage_string = str(wage)
+                 wage_string_cleaned = wage_string[1:len(wage_string)]
+                 wage_float = (wage_string_cleaned[0:len(wage_string_cleaned)-1])
+                 return (wage_float)
+
+6) Cleaning 'Release Clause' column
+       a) Basically, this column has entries like 'â‚¬6.5M' and 'â‚¬825K'. We will convert the entries which are in 'K' to 'M' and we will also remove 'â‚¬' 
+          from each entry.
+                
+             def clean_release(release):
+                 release_string = str(release)
+                 release_string_cleaned = release_string[1:len(release_string)]   #Extracting numeric part along with 'M' and 'K'
+
+                 if release_string_cleaned[-1] == 'K':
+                    release_float = (release_string_cleaned[0:len(release_string_cleaned)-1])  #Extracting numeric part and leaving 'M' and 'K'
+                    return float(release_float) * 0.001                         #Conversion into million
+
+                 elif release_string_cleaned[-1] == 'M':
+                    return release_string_cleaned[0:len(release_string_cleaned)-1]
+
+7) Cleaning 'Hits' column
+       a) Had 'nan' values which we have first replaced with 0.
+       b) Has two type of entries like - '200' i.e int and other like '1.1K'.
+       c) We will convert entries like '1.1K' into whole number and then proceed.  
+
+Player Performance by Age Group:
+
+What is the average overall rating (OVA) of players in different age groups (e.g., under 20, 21-25, 26-30, 31-35, over 35)?
+Do specific age groups excel in certain attributes like shooting or passing?
+Contract Length and Player Value:
+
+Is there a correlation between the length of a player's contract and their market value?
+Can you identify trends in contract lengths and market values over time?
+Preferred Foot and Attribute Correlations:
+
+Are there differences in attribute ratings (e.g., shooting accuracy) between players who prefer their left foot and those who prefer their right foot?
+Do players with a preferred foot perform better in their dominant attribute?
+Nationality and Position Analysis:
+
+Which nationalities produce the most players in specific positions (e.g., goalkeepers, midfielders, forwards)?
+Is there a correlation between a player's nationality and their preferred position?
+Player Versatility:
+
+Can you identify players who are versatile and capable of playing in multiple positions based on their listed positions and attribute ratings?
+Are there any notable players who excel in more than one position?
+Valuation and Wage Disparities by Position:
+
+Are there any positions where players are undervalued compared to their wages, or vice versa?
+Can you identify positions with significant valuation-to-wage ratios?
+Player Attribute Profiles:
+
+Can you group players into clusters based on their attribute profiles, and do these clusters align with their listed positions or nationalities?
+Are there any attributes that strongly distinguish one cluster from another?
+Age and Contract Expiry Analysis:
+
+Do players in certain age groups tend to sign longer or shorter contracts?
+Are there patterns in contract expiration based on age and potential (POT) ratings?
+Attribute Correlations:
+
+Are there attribute combinations that correlate strongly with a player's overall rating (OVA)?
+Can you identify the key attributes that contribute the most to a player's overall rating?
+Comparing Players with Similar Overall Ratings:
+
+Can you find players with similar overall ratings but different attribute profiles? What distinguishes them?
+Are there players with lower overall ratings but exceptional performance in specific attributes?
+
+
