@@ -1,0 +1,128 @@
+FIFA PLAYER ANALYSIS - 
+
+Data Cleaning part - 
+
+1. Checked which all columns contain null values
+2. Checked the data type of each column
+3. Checked if the columns which should contain unique value like 'ID','Name' and 'LongName' contain unique values or not. Found out that 
+   "Name" and 'LongName' had duplicate values so to avoid confusion while analysis, dropped the duplicate entries from both the columns.
+
+4. Cleaning 'Contract' column by splitting it into two parts- 'Contract start year' and 'Contract end year'; used '~' as the delimeter.
+5. Converted 'Contract start year' and 'Contract end year' to 'int' and irrelevant values like 'Free' and 'long strings' are dropped.
+
+6. Cleaning 'height' column ---- 
+   a) Height is present in two formats - first like '190cm' and other like 6'3 i.e 6 feet 3 inches.
+      Entries present in feet are converted to cm and unit 'cm' is removed from the entries. 
+
+      height_string = str(height)
+      if height_string[len(height_string)-2:len(height_string)] == 'cm':  #check if last 2 digits are 'cm'
+            return height_string[0:3]
+      else:
+            temp = height_string.split("'")  #spliting using ' as the separator
+            temp_first_part = float(temp[0]) * 30.48
+            temp_second_part = temp[1].split('"')   #splitting using " as the separator
+            temp_second_part = float(temp_second_part[0]) * 2.54
+      return (temp_first_part + temp_second_part)
+
+    b) Converted 'new_height' column to 'int' datatype.  
+
+7. Cleaning 'weight' column
+    a) Weight is present in two formats - first like '80kg' and then like '130lbs'. 
+       Entries present in each column is converted to 'kg' and unit 'kg' is dropped. 
+       
+       weight_string = str(weight)
+       if weight_string[len(weight_string)-2:len(weight_string)] == 'kg':  #last 2 digits are kg
+            return weight_string[0:len(weight_string)-2]
+
+       elif weight_string[len(weight_string)-3:len(weight_string)] == 'lbs': #last 3 digits are lbs
+            weight_lbs = weight_string[0:len(weight_string)-3]
+            return (float(weight_lbs) * 0.45)                                   #returning weight in kg
+
+     b) Converted 'weight_in_kg' to 'int' datatype. 
+
+8. Cleaning 'value' column
+      a) Values are present in two forms - 'â‚¬103.5M' and like 'â‚¬103.5K'. 
+         "â‚¬" is removed from each entry and then, each entry is converted to million if it is in K. 
+          
+              value_string = str(value)
+              value_string_cleaned = value_string[1:len(value_string)]   #Extracting numeric part along with 'M' and 'K'
+              #return value_string_cleaned
+
+              if value_string_cleaned[-1] == 'K':
+                   value_float = (value_string_cleaned[0:len(value_string_cleaned)-1])  #Extracting numeric part and leaving 'M' and 'K'
+                   return float(value_float) * 0.001                         #Conversion into million
+
+              elif value_string_cleaned[-1] == 'M':
+                   return value_string_cleaned[0:len(value_string_cleaned)-1]
+       b) Converted 'Cleaned_Value_in_million' to 'float' datatype.
+
+5) Cleaning 'wage' column
+       a) This column has entries like 'â‚¬825K','â‚¬0','â‚¬800'. We will remove 'â‚¬' and 'K 'from each entry.
+             
+             def clean_wage(wage):
+                 wage_string = str(wage)
+                 wage_string_cleaned = wage_string[1:len(wage_string)]
+                 wage_float = (wage_string_cleaned[0:len(wage_string_cleaned)-1])
+                 return (wage_float)
+
+6) Cleaning 'Release Clause' column
+       a) Basically, this column has entries like 'â‚¬6.5M' and 'â‚¬825K'. We will convert the entries which are in 'K' to 'M' and we will also remove 'â‚¬' 
+          from each entry.
+                
+             def clean_release(release):
+                 release_string = str(release)
+                 release_string_cleaned = release_string[1:len(release_string)]   #Extracting numeric part along with 'M' and 'K'
+
+                 if release_string_cleaned[-1] == 'K':
+                    release_float = (release_string_cleaned[0:len(release_string_cleaned)-1])  #Extracting numeric part and leaving 'M' and 'K'
+                    return float(release_float) * 0.001                         #Conversion into million
+
+                 elif release_string_cleaned[-1] == 'M':
+                    return release_string_cleaned[0:len(release_string_cleaned)-1]
+        b) Converted 'Cleaned_wages_in_K' to 'float' datatype. 
+
+7) Cleaning 'Hits' column
+       a) Had 'nan' values which we have first replaced with 0.
+       b) Had two type of entries like - '200' i.e int and other like '1.1K'.
+       c) Converted entries like '1.1K' into whole number by removing 'K' and multiplying with 1000.  
+
+
+Analytics Part --
+Player Performance by Age Group:
+
+1. What is the average overall rating (OVA) of players in different age groups (e.g., under 20, 21-25, 26-30, 31-35, over 35)?
+   
+   Created age_categories - ['Under 20', '20-24', '25-29', '30-34', '>= 35'] 
+   Highest -      (Age Category:30-34)    (OVA:69.411893)
+   Lowest  -      (Under 20)              (OVA:60.18)
+
+2. Do specific age groups excel in certain attributes like shooting or passing?
+   
+   Worst performance -           Under 20    Avg shooting: ~48    Avg Passing: ~52
+   Best Shooting and passing  -    >= 35       ~59                  ~62                     (Shown more clearly using bar chart)
+              
+3. Is there a correlation between the length of a player's contract and their market value?   
+
+   Value of correlation coefficient = 0.225 
+   #Positive correlation of 0.225 indicates that players with longer contracts have high market values
+   #Relation illustrated more clearly with the help of a scatter plot
+
+4. Are there differences in attribute ratings (e.g., shooting accuracy) between players who prefer their left foot and those who prefer their right foot?
+
+   Generally, attributes like ('Crossing', 'Finishing', 'Heading Accuracy','Short Passing', 'Volleys', 'Skill', 'Dribbling', 'Curve',
+                              'FK Accuracy', 'Long Passing', 'Ball Control') are better for left footed players than right footed players. 
+   More clearly illustrated with the help of bar chart. 
+
+5. Number of players in specific positions (e.g., goalkeepers, midfielders, forwards).
+
+6. Are there any positions where players are undervalued compared to their wages, or vice versa?
+
+7. Do players in certain age groups tend to sign longer or shorter contracts?
+
+8. Are there patterns in contract expiration based on age and potential (POT) ratings?
+
+9. Are there attribute combinations that correlate strongly with a player's overall rating (OVA)?
+   Can you identify the key attributes that contribute the most to a player's overall rating?
+
+
+
